@@ -1,8 +1,10 @@
 import sqlite3
 import os
 import datetime
+import re
 
 from flask import Flask, g, request, jsonify, current_app
+from .constants import BOOK_TITLES
 
 app = Flask(__name__)
 
@@ -68,6 +70,21 @@ def _get_bookrequests():
     return jsonify(d)
 
 
+def check_valid_email(email):
+    # Make a regular expression 
+    # for validating an Email 
+    regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+    if not re.search(regex, email):
+        return False
+    return True
+
+
+def check_valid_title(title):
+    if title not in BOOK_TITLES:
+        return False
+    return True
+
+
 @app.route('/request', methods=['POST', 'GET'])
 def request_base():
     if request.method == 'GET':
@@ -77,6 +94,14 @@ def request_base():
     req_data = request.get_json()
     email = req_data['email']
     title = req_data['title']
+
+    valid = check_valid_email(email)
+    if not valid:
+        return {'Message': 'Not valid email'}
+    valid = check_valid_title(title)
+    if not valid:
+        return {'Message': 'Not valid title'}
+
     dt = datetime.datetime.now()
 
     db = get_db()

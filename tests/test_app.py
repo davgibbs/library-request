@@ -47,6 +47,14 @@ def test_insert(client):
     assert response_json['email'] == 'test@tester.com'
 
 
+def test_valid_email(client):
+    """Test adding in a new request"""
+    title = 'Ulysses'
+    data = json.dumps({'email': 'test@testercom', 'title': title})
+    response = client.post('/request', data=data, content_type='application/json')
+    assert response.json == {'Message': 'Not valid email'}
+
+
 def test_get_unknown(client):
     response = client.get('/request/2')
 

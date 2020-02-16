@@ -15,3 +15,6 @@ flask run
 
 Load the Db structure:
 ~/library-request/database$ sqlite3 flask_library.db < schema.sql
+
+To run the tests
+~/library-request$ pytest
